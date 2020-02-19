@@ -14,7 +14,7 @@
        
        01  VARIAVEIS-WORKING.
           	05  W-OPCAO-GERAL          PIC 9(001) VALUE ZEROS.
-05  W-MSG-TELA			PIC X(001) VALUE SPACES.
+            05  W-MSG-TELA			PIC X(001) VALUE SPACES.
          
       *----------------------------------------------------------------*
        PROCEDURE DIVISION.
@@ -28,7 +28,7 @@
        99999-FIM-PRINCIPAL.            EXIT.
       *----------------------------------------------------------------*
      
- *----------------------------------------------------------------*
+      *----------------------------------------------------------------*
        10000-INICIA SECTION.
            
         	INITIALIZE VARIAVEIS-WORKING
@@ -38,24 +38,24 @@
        19999-FIM-INICIA.            EXIT.
       *----------------------------------------------------------------*
      
- *----------------------------------------------------------------*
+      *----------------------------------------------------------------*
        11000-MONTA-TELA SECTION.
            
-     	DISPLAY ERASE
-		DISPLAY "SISTEMA DE CLIENTES X VENDEDORES"		AT 0610
+     	    DISPLAY ERASE
+		    DISPLAY "SISTEMA DE CLIENTES X VENDEDORES"		AT 0610
         	DISPLAY "CADASTRO"  						AT 0810         
         	DISPLAY "1 – CADASTRO DE CLIENTE" 			AT 0910          
         	DISPLAY "2 – CADASTRO DE VENDEDOR" 			AT 1010
- 	DISPLAY "RELATORIOS" 						AT 1210          
-     	DISPLAY "3 – RELATORIO DE CLIENTE" 			AT 1310          
-     	DISPLAY "4 – RELATORIO DE VENDEDOR"			AT 1410           
-DISPLAY "EXECUTAR" 						AT 1610          
-     	DISPLAY " 5 – EXECUTAR DISTRIBUICAO DE CLIENTES" AT 1710
-DISPLAY "DIGITE A OPCAO DESEJADA" 			AT 1910
-ACCEPT W-OPCAO-GERAL						AT 1925
-DISPLAY W-MSG-TELA						AT 2125
+ 	        DISPLAY "RELATORIOS" 						AT 1210          
+     	    DISPLAY "3 – RELATORIO DE CLIENTE" 			AT 1310          
+     	    DISPLAY "4 – RELATORIO DE VENDEDOR"			AT 1410           
+            DISPLAY "EXECUTAR" 						AT 1610          
+     	    DISPLAY " 5 – EXECUTAR DISTRIBUICAO DE CLIENTES" AT 1710
+            DISPLAY "DIGITE A OPCAO DESEJADA" 			AT 1910
+            ACCEPT W-OPCAO-GERAL						AT 1925
+            DISPLAY W-MSG-TELA						AT 2125
 
-DISPLAY W-MSG-TELA
+            DISPLAY W-MSG-TELA
            .
        11999-FIM-MONTA-TELA.            EXIT.
       *----------------------------------------------------------------*
