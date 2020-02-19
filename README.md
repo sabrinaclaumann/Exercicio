@@ -1,2 +1,0 @@
-# Exercicio
-Prova Cobol AMcom
