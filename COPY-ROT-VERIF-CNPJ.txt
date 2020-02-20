@@ -1,0 +1,7 @@
+*----------------------------------------------------------------*
+* COPY DA SUBROTINA QUE VERIFICA SE O CNPJ EH VALIDO             *
+*----------------------------------------------------------------*
+
+	01  W-ROT-VERIF-CNPJ.
+		05 W-CNPJ-CNPJ			PIC  9(014) VALUE ZEROS.
+		05 W-CNPJ-MSG-ERRO		PIC  X(060) VALUE SPACES.

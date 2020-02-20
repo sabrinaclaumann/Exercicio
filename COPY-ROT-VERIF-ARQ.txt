@@ -1,0 +1,7 @@
+*----------------------------------------------------------------*
+* COPY DA SUBROTINA QUE VERIFICA SE O ARQUIVO EH VALIDO E EXISTE *
+*----------------------------------------------------------------*
+
+	01  W-ROT-VERIF-ARQ.
+		05 W-ARQ-NOME-ARQ		PIC  X(040) VALUE SPACES.
+		05 W-ARQ-MSG-ERRO		PIC  X(060) VALUE SPACES.

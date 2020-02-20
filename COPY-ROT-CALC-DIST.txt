@@ -2,10 +2,10 @@
 * COPY DA SUBROTINA QUE CALCULA A DISTANCIA ENTRE OS PONTOS      *
 *----------------------------------------------------------------*
 
-01 CALC-DISTANCIA.
+01 COPY-ROT-CALC-DIST.
     05 W-CALC-LAT-CLI        PIC S9(003)V9(008).
     05 W-CALC-LAT-VEND       PIC S9(003)V9(008).
     05 W-CALC-LONG-CLI       PIC S9(003)V9(008).
     05 W-CALC-LONG-VEND      PIC S9(003)V9(008).
     05 W-CALC-DISTANCIA      PIC  9(005).
-    05 W-CALC-FS             PIC  X(02).
+    05 W-CALC-MSG-ERRO       PIC  X(02).

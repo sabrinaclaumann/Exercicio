@@ -1,0 +1,220 @@
+
+*----------------------------------------------------------------*
+ IDENTIFICATION                 DIVISION.
+ PROGRAM-ID.                    IMPORTACLIENTE.
+*----------------------------------------------------------------*
+ ENVIRONMENT                    DIVISION.
+ CONFIGURATION                  SECTION.
+*----------------------------------------------------------------*
+ SPECIAL-NAMES.
+ 	DECIMAL-POINT               IS COMMA.
+
+ INPUT-OUTPUT                   SECTION.
+
+ FILE-CONTROL.
+
+     SELECT ARQ-IMPORT ASSIGN  TO DISK W-NOME-ARQUIVO
+        ORGANIZATION            IS INDEXED
+        ACESS MODE              IS SEQUENCIAL
+        RECORD-KEY              IS W-ARQIMP-CNPJ
+        LOCK MODE               IS MANUAL
+        FILE STATUS             IS W-RESULTADO-IMPORT.
+
+    SELECT ARQ-CLIENTE ASSIGN   TO DISK WID-ARQ-CLIENTE
+        ORGANIZATION            IS INDEXED
+        ACESS MODE              IS SEQUENCIAL
+        RECORD-KEY              IS W-ARQCLI-CNPJ
+        LOCK MODE               IS MANUAL
+        FILE STATUS             IS W-RESULTADO-CLIENTE.
+		    
+*----------------------------------------------------------------*
+ DATA                           DIVISION.
+
+    FILE                        SECTION.
+    
+	COPY ARQ-IMPORT.
+
+	COPY ARQ-CLIENTE.
+
+ WORKING-STORAGE SECTION.
+*----------------------------------------------------------------*
+ 
+ 	COPY COPY-ROT-VERIF-CNPJ.
+
+	COPY COPY-ROT-VERIF-ARQ.
+ 
+	01 W-RESULTADO-IMPORT.
+        05 W-FS-IMPORT		     PIC  X(002).
+    
+    01 W-RESULTADO-CLIENTE.
+        05 W-FS-CLIENTE			 PIC  X(002).
+
+    01  W-VAR-RECEBIDAS.
+		05 W-NOME-ARQUIVO		PIC  X(040) VALUE SPACES.
+		05 W-MSG-TELA			PIC  X(060) VALUE SPACES.
+
+    01  VARIAVEIS-WORKING.
+		05 W-QTD-INS			PIC  9(005) VALUE ZEROS.
+
+*----------------------------------------------------------------*
+ PROCEDURE DIVISION				USING W-VAR-RECEBIDAS.
+
+ 00000-PRINCIPAL SECTION.
+
+ 	PERFORM 10000-INICIA
+    PERFORM 20000-PROCESSA
+    PERFORM 90000-FINALIZA
+ 	.
+ 99999-FIM-PRINCIPAL.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 10000-INICIA SECTION.
+           
+ 	INITIALIZE VARIAVEIS-WORKING
+
+	IF W-NOME-ARQUIVO			EQUAL SPACES
+		MOVE "ARQUIVO DE IMPORTACAO VAZIO" TO W-MSG-TELA
+		PERFORM 90000-FINALIZA
+	ELSE
+		INITIALIZE				W-ROT-VERIF-ARQ
+		MOVE W-NOME-ARQUIVO		TO W-ARQ-NOME-ARQ
+		CALL VERIFICAARQUIVO    USING W-ROT-VERIF-ARQ
+			IF W-ARQ-MSG-ERRO	NOT EQUAL SPACES
+				MOVE "ARQUIVO NAO ENCONTRADO" TO W-MSG-TELA
+				PERFORM 90000-FINALIZA
+			END-IF
+		END-IF
+	END-IF
+
+	OPEN INPUT	ARQ-IMPORT 
+		 I-O	ARQ-CLIENTE
+	.
+  19999-FIM-INICIA.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 20000-PROCESSA 					SECTION. 
+          
+	PERFORM UNTIL W-FS-IMPORT		NOT EQUAL '00'
+		READ ARQ-IMPORT
+		PERFORM 21000-TRATA-ARQ-IMPORT
+		PERFORM 22000-VERIFICA-DADOS
+		PERFORM 23000-VERIFICA-DUPL
+		END-PERFORM
+	END-PERFOM
+
+	STRING "FORAM INSERIDOS " W-QTD-INS " COM SUCESSO" INTO W-MSG-TELA							
+   	.
+29999-FIM-PROCESSA.            		EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 21000-TRATA-ARQ-IMPORT			SECTION.
+
+	IF W-FS-IMPORT      		EQUAL '35'
+		MOVE "ARQUIVO DE IMPORTACAO VAZIO" TO W-MSG-TELA
+		PERFORM 90000-FINALIZA 
+	ELSE
+		IF W-FS-IMPORT			EQUAL '10'
+			MOVE "IMPORTACAO REALIZADA COM SUCESSO" TO W-MSG-TELA 
+		ELSE
+	   		IF W-FS-IMPORT	     NOT EQUAL '00'
+				MOVE "ERRO NA LEITURA DO ARQUIVO DE IMPORTACAO" TO W-MSG-TELA
+				PERFORM 90000-FINALIZA 
+			END-IF
+		END-IF
+	END-IF
+	.
+ 21199-FIM-TRATA-ARQ-IMPORT.       EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 22000-VERIFICA-DADOS 				SECTION.
+	
+	IF W-ARQIMP-CNPJ				NOT NUMERIC
+   		MOVE “ARQUIVO COM CNPJ NAO NUMERICO” TO W-MSG-TELA
+		PERFORM 90000-FINALIZA
+	END-IF
+
+	INITIALIZE	W-ROT-VERIF-CNPJ
+	MOVE W-ARQIMP-CNPJ				TO W-CNPJ-CNPJ
+
+	CALL VERIFICA-CNPJ USING W-ROT-VERIF-CNPJ
+
+	IF W-CNPJ-MSG-ERRO				NOT EQUAL SPACES
+		MOVE MSG-ERRO-SUBROTINA		TO W-MSG-TELA
+		PERFORM 90000-FINALIZA
+	END-IF
+
+	IF W-ARQIMP-COD-CLI				NOT NUMERIC
+		MOVE “ARQUIVO COM CAMPO COD DO CLIENTE NAO NUMERICO” 
+									TO W-MSG-TELA
+		PERFORM 90000-FINALIZA
+	END-IF
+	
+	IF W-ARQIMP-LAT					NOT NUMERIC
+		MOVE “ARQUIVO COM CAMPO LATITUDE NAO NUMERICO” 
+									TO W-MSG-TELA
+		PERFORM 90000-FINALIZA
+	END-IF
+
+	IF W-ARQIMP-LONG			 NOT NUMERIC
+   		MOVE “ARQUIVO COM CAMPO LONGITUDE NAO NUMERICO” 
+									TO W-MSG-TELA
+		PERFORM 90000-FINALIZA
+	END-IF
+	.
+ 22999-VERIFICA-DADOS.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 23000-VERIFICA-DUPL  				SECTION.
+
+	MOVE W-ARQIMP-CNPJ				TO W-ARQCLI-CNPJ     
+	READ ARQ-CLIENTE
+	
+	IF W-FS-CLIENTE					EQUAL '00'
+	   MOVE 'ALGUM(NS) CNPJ(S) NAO FORAM INSERIDOS POR ESTAREM DUPLICADOS"
+	ELSE
+		IF W-FS-CLIENTE 				EQUAL '10' OR '35'
+			PERFORM 23100-GRAVA-REGISTRO
+		ELSE
+			MOVE 'ERRO NA BUSCA DE CNPJ DUPLICADO"
+			PERFORM 90000-FINALIZA
+		END-IF
+	END-IF
+	.
+ 22100-FIM-VERIFICA-DUPL.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 23100-GRAVA-REGISTRO				SECTION.
+
+ 	MOVE W-ARQIMP-CNPJ			 	TO W-ARQCLI-COD-CLI
+	MOVE W-ARQIMP-COD-CLI			TO W-ARQCLI-RAZAO
+	MOVE W-ARQIMP-RAZAO				TO W-ARQCLI-COD-VEND
+	MOVE W-ARQIMP-LAT				TO W-ARQCLI-NOME
+	MOVE W-ARQIMP-LONG				TO W-ARQCLI-DIST
+	
+	WRITE ARQ-CLIENTE
+
+	IF W-FS-CLIENTE					NOT EQUAL '00'
+		STRING "ERRO NA GRAVACAO DO ARQUIVO." W-FS-CLIENTE	
+									INTO W-MSG-TELA
+		PERFORM 90000-FINALIZA
+	END-IF
+
+	ADD 1							TO W-QTD-INS
+	.
+ 22100-FIM-GRAVA-REGISTRO.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 90000-FINALIZA SECTION.
+
+	CLOSE ARQ-CLIENTE
+
+	GO BACK
+	.
+ 99999-FIM-FINALIZE. EXIT.
