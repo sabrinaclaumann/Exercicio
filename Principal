@@ -6,10 +6,10 @@
        CONFIGURATION                    SECTION.
       *----------------------------------------------------------------*
        SPECIAL-NAMES.
-           DECIMAL-POINT  IS COMMA.
+           DECIMAL-POINT                IS COMMA.
       *----------------------------------------------------------------*
-       DATA DIVISION.
-       WORKING-STORAGE SECTION.
+       DATA                             DIVISION.
+       WORKING-STORAGE                  SECTION.
       *----------------------------------------------------------------*
        
        01  VARIAVEIS-WORKING.
@@ -56,7 +56,7 @@
       *----------------------------------------------------------------*
      
       *----------------------------------------------------------------*
-       11000-MOSTRA-TELA                     SECTION.
+       11000-MOSTRA-TELA                 SECTION.
            
         	DISPLAY TELA-PRINC
 
@@ -80,7 +80,7 @@
             WHEN 5
 	            CALL DISTRIBUICAO-CLIENTE
             WHEN OTHER
-	            MOVE “OPCAO INVALIDA” TO W-MSG-TELA
+	            MOVE “OPCAO INVALIDA”   TO W-MSG-TELA
 	            PERFORM 11000-MOSTRA-TELA
         END-EVALUATE        
         .
