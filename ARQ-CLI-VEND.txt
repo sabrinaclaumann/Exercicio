@@ -1,0 +1,11 @@
+*----------------------------------------------------------------*
+* COPY DO ARQUIVO DE CLIENTES ASSOCIADOS A VENDEDORES            *
+*----------------------------------------------------------------*
+
+FD ARQ-CLI-VEND.
+01 W-ARQ-CLI-VEND.
+    05 W-ARQCLI-VE-COD-CLI     PIC  9(007).
+    05 W-ARQCLI-VE-RAZAO       PIC  X(040).
+    05 W-ARQCLI-VE-COD-VEND    PIC  9(007).
+    05 W-ARQCLI-VE-NOME        PIC  X(040).
+    05 W-ARQCLI-VE-DIST        PIC  9(005).

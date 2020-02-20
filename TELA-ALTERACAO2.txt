@@ -1,0 +1,17 @@
+*----------------------------------------------------------------*
+* COPY DA SEGUNDA TELA DE ALTERACAO                              *
+*----------------------------------------------------------------*
+
+01  TELA-ALTERACAO2.
+        05  LINE  6 COL 10 VALUE "ALTERACAO DE CLIENTES".
+        05  LINE  8 COL 10 VALUE "DIGITE OS DADOS QUE DESEJA ALTERAR".
+        05  LINE 10 COL 10 VALUE "CNPJ        : ".
+        05  CNPJ LINE 10 COL 25 PIC 9(14) USING W-CNPJ.
+        05  LINE 11 COL 10 VALUE "RAZAO SOCIAL:           
+        ________________________________________________________".
+        05  RAZAO LINE 11 COL 25 PIC X(40) USING W-RAZAO-SOC.
+        05  LINE 12 COL 10 VALUE "LATITUDE    : ___,________".
+        05  LATITUDE LINE 12 COL 25 PIC S9(03)V9(08) USING W-LATITUDE.
+        05  LINE 13 COL 10 VALUE "LONGITUDE   : ___,________".
+        05  LONGITUDE LINE 13 COL 25 PIC S9(03)V9(08) USING W-LATITUDE.
+        05  MENSAGEM LINE 15 COL 10 PIC X(050) USING W-MSG-TELA.

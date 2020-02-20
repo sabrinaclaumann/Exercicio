@@ -2,6 +2,7 @@
 * COPY DO ARQUIVO DE CLIENTES                                    *
 *----------------------------------------------------------------*
 
+FD ARQ-CLIENTE.
 01 W-ARQ-CLIENTE.
     05 W-ARQCLI-COD-CLI     PIC  9(007).
     05 W-ARQCLI-CNPJ        PIC  9(014).

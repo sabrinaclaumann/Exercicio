@@ -1,0 +1,11 @@
+*----------------------------------------------------------------*
+* COPY DO ARQUIVO DE VENDEDORES                                  *
+*----------------------------------------------------------------*
+
+FD ARQ-VENDEDOR.
+01 W-ARQ-VENDEDOR.
+    05 W-ARQVEND-COD         PIC  9(007).
+    05 W-ARQVEND-CPF         PIC  9(011).
+    05 W-ARQVEND-NOME        PIC  X(040).
+    05 W-ARQVEND-LAT         PIC S9(003)V9(008).
+    05 W-ARQVEND-LONG        PIC S9(003)V9(008).
