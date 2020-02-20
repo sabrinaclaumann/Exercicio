@@ -1,0 +1,18 @@
+*----------------------------------------------------------------*
+* COPY DA SEGUNDA TELA DE ALTERACAO DE VENDEDORES                *
+*----------------------------------------------------------------*
+
+01  TELA-ALTERACAO2-VEND.
+    05  LINE  6 COL 10 VALUE "ALTERACAO DE VENDEDORES".
+    05  LINE  8 COL 10 VALUE "CPF         : ".
+    05  LINE  8 COL 25 VALUE W-CPF.
+    05  LINE 10 COL 10 VALUE "DIGITE OS DADOS QUE DESEJA ALTERAR".
+    05  LINE 12 COL 10 VALUE "COD. VENDEDOR: _______" 
+    05  CODCLI LINE 12 COL 25 PIC 9(07) USING W-COD-VEND.
+    05  LINE 13 COL 10 VALUE "NOME         : ________________________________________________________".
+    05  NOME LINE 13 COL 25 PIC X(40) USING W-NOME.
+    05  LINE 14 COL 10 VALUE "LATITUDE    : ___,________".
+    05  LATITUDE LINE 14 COL 25 PIC S9(03)V9(08) USING W-LATITUDE.
+    05  LINE 15 COL 10 VALUE "LONGITUDE   : ___,________".
+    05  LONGITUDE LINE 15 COL 25 PIC S9(03)V9(08) USING W-LATITUDE.
+    05  MENSAGEM LINE 17 COL 10 PIC X(050) USING W-MSG-TELA.

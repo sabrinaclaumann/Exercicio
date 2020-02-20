@@ -1,0 +1,10 @@
+*----------------------------------------------------------------*
+* COPY DA PRIMEIRA TELA DE ALTERACAO DE VENDEDORES               *
+*----------------------------------------------------------------*
+
+01  TELA-ALTERACAO1-VEND.
+        05  LINE  6 COL 10 VALUE "ALTERACAO DE VENDEDORES".
+        05  LINE  8 COL 10 VALUE "DIGITE O CNPJ DO VENDEDOR".
+        05  LINE 10 COL 10 VALUE "CPF        : _____________".
+        05  CPF LINE 10 COL 25 PIC 9(14) USING W-CPF.
+        05  MENSAGEM LINE 15 COL 10 PIC X(050) USING W-MSG-TELA.

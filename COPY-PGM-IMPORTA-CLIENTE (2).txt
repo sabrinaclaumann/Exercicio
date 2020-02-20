@@ -1,6 +1,0 @@
-*----------------------------------------------------------------*
-* COPY DO PROGRAMA QUE FAZ A IMPORTACAO DE CLIENTES              *
-*----------------------------------------------------------------*
-    01  PGM-IMP-CLI.
-		05 W-IMPCLI-NOME-ARQUIVO	PIC  X(040).
-		05 W-IMPCLI-MSG-TELA		PIC  X(060).

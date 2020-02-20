@@ -1,0 +1,19 @@
+*----------------------------------------------------------------*
+* COPY DA SEGUNDA TELA DE EXCLUSAO DE VENDEDORES                 *
+*----------------------------------------------------------------*
+
+01  TELA-EXCLUSAO2-VEND.
+        05  LINE  6 COL 10 VALUE "EXCLUSAO DE VENDEDORES".
+        05  LINE  8 COL 10 VALUE "CONFIRMA A EXCLUSO DO VENDEDOR ABAIXO (S/N)? ( )".
+        05  OCAOEXC LINE 11 COL 55 PIC X USING W-OPC-EXCLUSAO.  
+        05  LINE 10 COL 10 VALUE "CPF          :".
+        05  LINE 10 COL 26 VALUE W-CNPJ.
+        05  LINE 11 COL 10 VALUE"COD. VENDEDOR:"
+        05  LINE 11 COL 26 VALUE W-COD-VEND.
+        05  LINE 12 COL 10 VALUE "NOME         :".
+        05  LINE 12 COL 26 VALUE W-NOME-VEND.
+        05  LINE 13 COL 10 VALUE "LATITUDE     : ".
+        05  LINE 13 COL 26 VALUE W-LATITUDE.
+        05  LINE 14 COL 10 VALUE "LONGITUDE    : ".
+        05  LINE 14 COL 26 VALUE W-LATITUDE.
+        05  MENSAGEM LINE 16 COL 10 PIC X(050) USING W-MSG-TELA.

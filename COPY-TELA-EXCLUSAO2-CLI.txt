@@ -1,5 +1,5 @@
 *----------------------------------------------------------------*
-* COPY DA SEGUNDA TELA DE EXCLUSAO                               *
+* COPY DA SEGUNDA TELA DE EXCLUSAO DE CLIENTES                   *
 *----------------------------------------------------------------*
 
 01  TELA-EXCLUSAO2-CLI.
@@ -8,10 +8,12 @@
         05  OCAOEXC LINE 11 COL 54 PIC X USING W-OPC-EXCLUSAO.  
         05  LINE 10 COL 10 VALUE "CNPJ        : ".
         05  LINE 10 COL 25 VALUE W-CNPJ.
-        05  LINE 11 COL 10 VALUE "RAZAO SOCIAL: ".
-        05  LINE 11 COL 25 VALUE W-RAZAO-SOC.
-        05  LINE 12 COL 10 VALUE "LATITUDE    : ".
-        05  LINE 12 COL 25 VALUE W-LATITUDE.
-        05  LINE 13 COL 10 VALUE "LONGITUDE   : ".
+        05  LINE 11 COL 10 VALUE "COD. CLIENTE: ".
+        05  LINE 11 COL 25 VALUE W-COD-CLI.
+        05  LINE 12 COL 10 VALUE "RAZAO SOCIAL: ".
+        05  LINE 12 COL 25 VALUE W-RAZAO-SOC.
+        05  LINE 13 COL 10 VALUE "LATITUDE    : ".
         05  LINE 13 COL 25 VALUE W-LATITUDE.
-        05  MENSAGEM LINE 15 COL 10 PIC X(050) USING W-MSG-TELA.
+        05  LINE 14 COL 10 VALUE "LONGITUDE   : ".
+        05  LINE 14 COL 25 VALUE W-LATITUDE.
+        05  MENSAGEM LINE 16 COL 10 PIC X(050) USING W-MSG-TELA.

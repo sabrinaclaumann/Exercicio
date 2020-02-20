@@ -38,6 +38,9 @@
    
     COPY TELA-INCLUSAO.
 
+	COPY PGM-IMP-VEND
+
+
 *----------------------------------------------------------------*
  WORKING-STORAGE 				SECTION.
 

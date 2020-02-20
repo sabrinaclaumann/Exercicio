@@ -1,7 +1,7 @@
 
 *----------------------------------------------------------------*
  IDENTIFICATION 				DIVISION.
- PROGRAM-ID. 					ALTERAVENDEDOR.
+ PROGRAM-ID. 					ALTERA-VENDEDOR.
 *----------------------------------------------------------------*
  ENVIRONMENT 					DIVISION.
  CONFIGURATION 					SECTION.
@@ -124,11 +124,11 @@
    	IF W-CONTR-FASE					EQUAL ZEROS
 		PERFORM 21100-VERIFICA-CPF 
 		IF W-CONTR-ERRO				EQUAL ZEROS
-			PERFORM 21300-BUSCA-CPF
+			PERFORM 21200-BUSCA-CPF
 		END-IF
 	ELSE	
 		IF W-CONTR-ERRO				EQUAL ZEROS
-			PERFORM 21200-VERIFICA-DADOS
+			PERFORM 21300-VERIFICA-DADOS
 		END-IF
 		IF W-CONTR-ERRO				EQUAL ZEROS
 			PERFORM 21400-ATUALIZA-REGISTRO         
@@ -160,7 +160,21 @@
 *----------------------------------------------------------------*
 
 *----------------------------------------------------------------*
- 21200-VERIFICA-DADOS 				SECTION.
+ 21200-BUSCA-CPF 					SECTION.
+           
+	MOVE W-CPF 						TO W-ARQVEND-CPF     
+	READ ARQ-VENDEDOR
+	
+	IF W-FS-VENDEDOR 			NOT EQUAL '00'
+		MOVE "CPF NAO EXISTENTE"	TO W-MSG-TELA
+		MOVE 1						TO W-CONTR-ERRO
+	END-IF
+	.
+21299-FIM-BUSCA-CPF.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 21300-VERIFICA-DADOS 				SECTION.
 
  	IF W-ARQVEND-COD-VEND				NOT NUMERIC
 		MOVE “CAMPO COD DO CLIENTE DEVE SER NUMERICO” 
@@ -180,21 +194,7 @@
 		MOVE 1						TO W-CONTR-ERRO
 	END-IF
 .
- 21299-FIM-VERIFICA-DADOS.            EXIT.
-*----------------------------------------------------------------*
-
-*----------------------------------------------------------------*
- 21300-BUSCA-CPF 					SECTION.
-           
-	MOVE W-CPF 						TO W-ARQVEND-CPF     
-	READ ARQ-VENDEDOR
-	
-	IF W-FS-VENDEDOR 			NOT EQUAL '00'
-		MOVE "CPF NAO EXISTENTE"	TO W-MSG-TELA
-		MOVE 1						TO W-CONTR-ERRO
-	END-IF
-	.
-21399-FIM-BUSCA-CPF.            EXIT.
+ 21399-FIM-VERIFICA-DADOS.            EXIT.
 *----------------------------------------------------------------*
 
 *----------------------------------------------------------------*

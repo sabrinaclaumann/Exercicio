@@ -1,5 +1,5 @@
 *----------------------------------------------------------------*
-* COPY DA PRIMEIRA TELA DE ALTERACAO                             *
+* COPY DA PRIMEIRA TELA DE ALTERACAO DE CLIENTES                 *
 *----------------------------------------------------------------*
 
 01  TELA-ALTERACAO1-CLI.

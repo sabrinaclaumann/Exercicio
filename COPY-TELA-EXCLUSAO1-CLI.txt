@@ -1,5 +1,5 @@
 *----------------------------------------------------------------*
-* COPY DA PRIMEIRA TELA DE EXCLUSAO                              *
+* COPY DA PRIMEIRA TELA DE EXCLUSAO DE CLIENTES                  *
 *----------------------------------------------------------------*
 
 01  TELA-EXCLUSAO1-CLI.

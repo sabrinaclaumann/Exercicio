@@ -1,0 +1,14 @@
+*----------------------------------------------------------------*
+* COPY DA TELA DE RELATORIO INICIAL                                      *
+*----------------------------------------------------------------*
+
+01  TELA-RELATORIO3.
+        05  LINE  2 COL 03 VALUE "RELATORIO DE VENDEDORES".
+        05  LINE  4 COL 03 VALUE "ORDENAÇÃO     :__1-ASCENDENTE  2-DESCENDENTE".
+		05  OPCAOORD LINE 4  COL 18 PIC 9 USING W-OPCAO-ORDENACAO.
+		05  LINE  5 COL 03 VALUE "CLASSIFICAÇÃO :__1-COD VENDEDOR 2-NOME VENDEDOR".
+		05  OPCAOCLASS LINE 5  COL 18 PIC 9 USING W-OPCAO-CLASSIFICACAO.
+        05  LINE  8 COL 03 VALUE "FILTRAR POR CODIGO VENDEDOR:?_______".
+		05  OPCAOCOD-CLI LINE 8  COL 33 PIC 9(07) USING W-OPCAO-COD-VEND.
+		05  LINE  9 COL 03 VALUE "FILTRAR POR NOME VENDEDOR  :?_______________________________________".
+		05  OPCAORAZ-CLI LINE 9  COL 33 PIC X(40) USING W-OPCAO-NOME-VEND.

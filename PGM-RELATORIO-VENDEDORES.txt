@@ -1,0 +1,253 @@
+
+*----------------------------------------------------------------*
+ IDENTIFICATION 				DIVISION.
+ PROGRAM-ID. 					RELATORIO-VENDEDORES.
+*----------------------------------------------------------------*
+ ENVIRONMENT 					DIVISION.
+ CONFIGURATION 					SECTION.
+*----------------------------------------------------------------*
+ SPECIAL-NAMES.
+ 	DECIMAL-POINT 				IS COMMA.
+
+ INPUT-OUTPUT					SECTION.
+
+ FILE-CONTROL.
+    SELECT ARQ-VENDEDOR  ASSIGN TO DISK WID-ARQ-VENDEDOR
+    ORGANIZATION                IS INDEXED
+    ACESS MODE                  IS DYNAMIC
+    LOCK MODE                   IS MANUAL
+    FILE STATUS                 IS W-FS-VEND.
+	
+	SELECT SORT-VEND ASSIGN TO "SORT-VEND.DAT"
+	SORT STATUS IS FS-SORT-VEND
+
+*----------------------------------------------------------------*
+ DATA 							DIVISION.
+
+    FILE 						SECTION.
+    
+    COPY ARQ-VENDEDOR.
+	
+	SD SORT-VEND
+	01 SORT-REG-CLIENTES 
+	   10 SORT-COD-VEND          PIC  9(007).
+	   10 SORT-NOME-VEND         PIC  X(040).
+	  
+	   
+*----------------------------------------------------------------*
+  LINKAGE						SECTION.
+
+	01 VARIAVEIS-LINKAGE.
+		05 W-MSG-TELA			PIC  X(060).
+
+ SCREEN 					    SECTION.
+*----------------------------------------------------------------*
+	
+	COPY TELA-RELATORIO3.
+   
+   	COPY TELA-RELATORIO4.    
+
+	COPY ARQ-VENDEDOR.	
+
+ WORKING-STORAGE 				SECTION.
+*----------------------------------------------------------------*
+    
+    01  VARIAVEIS-WORKING.
+		05 W-VAR-RELATORIOS OCCURS 15 TIMES
+			10 W-COD-VEND         PIC  9(007).
+			10 W-NOME-VEND        PIC  X(040).
+	
+			
+	01 W-RESULTADO-CLI-VEND.
+        05 W-FS-CLI-VEND		PIC  X(002).
+		05 W-FS-SORT-VEND        PIC  X(002).
+		
+	01 W-AUXILIARES		
+		05 W-MSG-TELA			PIC  X(060) VALUE SPACES.  
+		05 W-OPCAO-TELA			PIC  9(001) VALUE ZEROS.
+		05 W-CONT               PIC  9(003).		
+
+    
+*----------------------------------------------------------------*
+ PROCEDURE DIVISION				USING W-MSG-TELA.
+
+ 00000-PRINCIPAL			    SECTION.
+
+ 	PERFORM 10000-INICIA
+	
+	IF  W-OPCAO-ORDENACAO     EQUAL 1
+	AND W-OPCAO-CLASSIFICACAO EQUAL 1	
+		SORT SORT-VEND ASCENDING  SORT-COD-VEND
+	    INPUT PROCEDURE IS 20000-PROCESSA UNTIL W-FS-CLI-VEND 	
+	                                     NOT EQUAL '00'
+	    OUTPUT PROCEDURE IS 30000-DESCARREGA-RELATORIO 
+	ELSE 
+		IF  W-OPCAO-ORDENACAO     EQUAL 1
+	    AND W-OPCAO-CLASSIFICACAO EQUAL 2	
+			SORT SORT-VEND ASCENDING  SORT-NOME-VEND
+			INPUT PROCEDURE IS 20000-PROCESSA UNTIL W-FS-CLI-VEND 	
+	                                     NOT EQUAL '00'
+			OUTPUT PROCEDURE IS 30000-DESCARREGA-RELATORIO 
+		ELSE
+			IF  W-OPCAO-ORDENACAO     EQUAL 2
+			AND W-OPCAO-CLASSIFICACAO EQUAL 1	
+				SORT SORT-VEND DESCENDING  SORT-COD-VEND
+				INPUT PROCEDURE IS 20000-PROCESSA UNTIL W-FS-CLI-VEND 	
+	                                     NOT EQUAL '00'
+				OUTPUT PROCEDURE IS 30000-DESCARREGA-RELATORIO 
+			ELSE 
+				IF  W-OPCAO-ORDENACAO     EQUAL 2
+				AND W-OPCAO-CLASSIFICACAO EQUAL 2	
+					SORT SORT-VEND ASCENDING  SORT-NOME-VEND
+					INPUT PROCEDURE IS 20000-PROCESSA UNTIL W-FS-CLI-VEND 	
+	                                     NOT EQUAL '00'
+					OUTPUT PROCEDURE IS 30000-DESCARREGA-RELATORIO 
+				END-IF	
+			END-IF
+		END-IF		
+			
+	END-IF
+	   
+    PERFORM 90000-FINALIZA
+ 	.
+ 99999-FIM-PRINCIPAL.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 10000-INICIA 					SECTION.
+           
+ 	INITIALIZE VARIAVEIS-WORKING
+
+	OPEN ARQ-VENDEDOR
+
+	DISPLAY ERASE
+
+	PERFORM 11000-MOSTRA-TELA
+	
+    .
+  19999-FIM-INICIA.            EXIT.
+*----------------------------------------------------------------*
+  
+*----------------------------------------------------------------*
+ 11000-MOSTRA-TELA             SECTION.
+           
+ 	DISPLAY TELA-RELATORIO3
+    
+    ACCEPT TELA-RELATORIO3
+	
+	PERFORM 11100-VALIDA-TELA-REL
+	
+    .
+  11999-FIM-INICIA.            EXIT.  
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 11100-VALIDA-TELA-REL        SECTION.
+
+	IF  (W-OPCAO-ORDENACAO NOT EQUAL 1 OR 2)
+	OR  (W-OPCAO-CLASSIFICACAO NOT EQUAL 1 OR 2)
+	   	MOVE 'SELECIONE AS OPCOES ORDENACAO E CLASSIFICACA' TO W-MSG-ERRO
+	    PERFORM - 11100-MOSTRA-TELA
+	END-IF
+ 
+   	IF   W-OPCAO-COD-VEND          NOT EQUAL ZEROS
+	AND	 W-OPCAO-NOME-VEND         NOT EQUAL SPACES
+		 MOVE 1                    TO W-TIPO-PESQUISA
+	ELSE
+		IF   W-OPCAO-COD-VEND      NOT EQUAL ZEROS
+			 MOVE 2                TO W-TIPO-PESQUISA
+		ELSE
+		   IF  W-OPCAO-NOME-VEND   NOT EQUAL SPACES
+     		   MOVE 3              TO W-TIPO-PESQUISA
+           ELSE 		
+               MOVE 4              TO W-TIPO-PESQUISA 
+		   END-IF 	 		
+        END-IF
+    END-IF
+   	
+	READ ARQ-VENDEDOR
+	.
+
+    11999-FIM-VALIDA-TELA-REL	
+*----------------------------------------------------------------*
+ 
+*----------------------------------------------------------------*
+ 2000-PROCESSA  SECTION.
+
+	EVALUATE W-TIPO-PESQUISA
+	
+    WHEN 1
+		
+	    IF   W-OPCAO-COD-VEND     EQUAL W-ARQVEND-COD	
+	    AND  W-OPCAO-NOME-VEND    EQUAL W-ARQVEND-NOME
+	  	     MOVE W-ARQ-VEND-COD  TO SORT-COD-VEND
+		     MOVE W-ARQVEND-NOME  TO SORT-NOME-VEND	
+		     RELEASE  SORT-REG-CLIENTES 		
+	    END-IF
+		
+	WHEN 2
+	
+	    IF   W-OPCAO-COD-VEND       EQUAL W-ARQVEND-COD	
+	         MOVE W-ARQ-VEND-COD    TO SORT-COD-VEND
+		     MOVE W-ARQVEND-NOME    TO SORT-NOME-VEND	
+		   	 RELEASE  SORT-REG-CLIENTES	
+	    END-IF
+		
+    WHEN 3
+	
+	    IF   W-OPCAO-NOME-VEND         EQUAL W-ARQVEND-NOME	
+	         MOVE W-ARQ-VEND-COD     TO SORT-COD-VEND
+		     MOVE W-ARQVEND-NOME     TO SORT-NOME-VEND	
+			 RELEASE  SORT-REG-CLIENTES	
+	    END-IF
+		
+	WHEN 4
+	 		 MOVE W-ARQVEND-COD      TO SORT-COD-VEND
+			 MOVE W-ARQVEND-NOME     TO SORT-NOME-VEND	
+			 RELEASE  SORT-REG-CLIENTES	
+	END-EVALUATE	
+	     
+	READ ARQ-VENDEDOR	
+	
+    .	
+ 29999-FIM-PROCESSA.            	EXIT.
+ 
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 30000-DESCARREGA-RELATORIO			SECTION.
+ 
+	PERFORM 31000-DESCARREGA-SORT UNTIL FS-SORT-VEND EQUAL "10"
+	                              OR W-CONT GREATER THAN 15
+	
+		
+	DISPLAY TELA-RELATORIO4
+	.
+ 39999-FIM-DESCARREGA-RELATORIO. EXIT.
+ 
+ *----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 31000-DESCARREGA-SORT               SECTION.
+ 
+	ADD 1                   TO  W-CONT
+	
+	RETURN SORT-VEND AT END MOVE "10" TO FS-SORT-VEND
+
+	MOVE SORT-COD-VEND       TO W-COD-VEND(W-CONT)
+	MOVE SORT-NOME-VEND      TO W-NOME-VEND(W-CONT)
+	
+	.
+ 31999-FIM-DESCARREGA-RELATORIO. EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 90000-FINALIZA SECTION.
+ 
+	CLOSE ARQ-VENDEDOR
+
+	GO BACK
+	.
+ 99999-FIM-FINALIZE. EXIT.
+ 
+ 

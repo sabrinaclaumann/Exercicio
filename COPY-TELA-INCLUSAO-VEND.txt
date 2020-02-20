@@ -1,0 +1,20 @@
+*----------------------------------------------------------------*
+* COPY DA TELA DE INCLUSAO DE VENDEDORES                         *
+*----------------------------------------------------------------*
+
+01  TELA-INCLUSAO-VEND.
+    05  LINE  2 COL  2 VALUE "PARA VOLTAR USE DIGITE 9 AQUI: ( )"
+    05  VOLTA LINE  2  COL 33 PIC 9 USING W-CONTR-VOLTA.
+    05  LINE  6 COL 10 VALUE "INCLUSAO DE VENDEDORES".
+    05  LINE  8 COL 10 VALUE "DIGITE OS DADOS DO VENDEDOR".
+    05  LINE 10 COL 10 VALUE "CPF          : ______________".
+    05  CPF LINE 10 COL 25 PIC 9(14) USING W-CPF.
+    05  LINE 11 COL 10 VALUE "COD. VENDEDOR: _______" 
+    05  CODVEND LINE 11 COL 25 PIC 9(07) USING W-COD-VEND.
+    05  LINE 12 COL 10 VALUE "NOME         : ________________________________________________________".
+    05  RAZAO LINE 12 COL 25 PIC X(40) USING W-NOME-VEND.
+    05  LINE 13 COL 10 VALUE "LATITUDE    : ___,________".
+    05  LATITUDE LINE 13 COL 25 PIC S9(03)V9(08) USING W-LATITUDE.
+    05  LINE 14 COL 10 VALUE "LONGITUDE   : ___,________".
+    05  LONGITUDE LINE 14 COL 25 PIC S9(03)V9(08) USING W-LATITUDE.
+    05  MENSAGEM LINE 16 COL 10 PIC X(050) USING W-MSG-TELA.
