@@ -1,0 +1,11 @@
+*----------------------------------------------------------------*
+* COPY DO ARQUIVO DE IMPORTACAO DE CLIENTE                       *
+*----------------------------------------------------------------*
+
+FD ARQ-IMPORT-CLI.
+01 W-ARQ-IMP-CLI.
+    05 W-ARQIMPCLI-CNPJ        PIC  9(014).
+    05 W-ARQIMPCLI-COD-CLI     PIC  9(007).
+    05 W-ARQIMPCLI-RAZAO       PIC  X(040).
+    05 W-ARQIMPCLI-LAT         PIC S9(003)V9(008).
+    05 W-ARQIMPCLI-LONG        PIC S9(003)V9(008).

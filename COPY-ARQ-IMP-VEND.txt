@@ -1,0 +1,11 @@
+*----------------------------------------------------------------*
+* COPY DO ARQUIVO DE IMPORTACAO DE VENDEDORES                    *
+*----------------------------------------------------------------*
+
+FD ARQ-IMPORT-VEND.
+01 W-ARQ-IMP-VEND.
+    05 W-ARQIMPVEND-CPF         PIC  9(011).
+    05 W-ARQIMPVEND-COD-VEND    PIC  9(007).
+    05 W-ARQIMPVEND-NOME        PIC  X(040).
+    05 W-ARQIMPVEND-LAT         PIC S9(003)V9(008).
+    05 W-ARQIMPVEND-LONG        PIC S9(003)V9(008).
