@@ -22,28 +22,19 @@
 *----------------------------------------------------------------*
  DATA 							DIVISION.
 
-    FILE 						SECTION.
+*----------------------------------------------------------------*
+ FILE 							SECTION.
     
     COPY ARQ-CLIENTE.
 
- WORKING-STORAGE 				SECTION.
 *----------------------------------------------------------------*
-    
-    01 W-RESULTADO-ENTRADA-CLI.
-        05 W-FS-ENTRADA-CLI     PIC  X(002).
+  LINKAGE						SECTION.
 
-    01  VARIAVEIS-WORKING.
-      	05 W-OPC-CAD-CLI        PIC  9(001) VALUE ZEROS.
-		05 W-OPC-EXCLUSAO		PIC  X(001) VALUE SPACES.
-		05 W-COD-CLI			PIC  9(007) VALUE ZEROS.
-		05 W-CNPJ				PIC  9(014) VALUE ZEROS.
-		05 W-RAZAO-SOC			PIC  X(040) VALUE SPACES.
-		05 W-LATITUDE			PIC S9(003)v9(008) VALUW ZEROS.
-		05 W-LONGITUDE			PIC S9(003)v9(008) VALUW ZEROS.
-		05 W-MSG-TELA			PIC  X(060) VALUE SPACES.
-		05 W-OPCAO-TELA			PIC  9(001) VALUE ZEROS.
-	
-	SCREEN 					SECTION.
+	01 VARIAVEIS-LINKAGE.
+		05 W-MSG-TELA			PIC  X(060).
+
+*----------------------------------------------------------------*
+  SCREEN 						SECTION.
    
    	COPY TELA-CADASTRO.
 
@@ -56,15 +47,38 @@
     COPY  TELA-EXCLUSAO1.
     
     COPY  TELA-EXCLUSAO2.
-    
+
 *----------------------------------------------------------------*
- PROCEDURE DIVISION				USING W-MSG-TELA.
+ WORKING-STORAGE 				SECTION.
+    
+    01 W-RESULTADO-ENTRADA-CLI.
+        05 W-FS-ENTRADA-CLI     PIC  X(002).
+
+	01  VARIAVEIS-WORKING.
+      	05 W-OPC-CAD-CLI        PIC  9(001) VALUE ZEROS.
+
+    01  VARIAVEIS-WORKING.
+      	05 W-OPC-CAD-CLI        PIC  9(001) VALUE ZEROS.
+		05 W-OPC-EXCLUSAO		PIC  X(001) VALUE SPACES.
+		05 W-COD-CLI			PIC  9(007) VALUE ZEROS.
+		05 W-CNPJ				PIC  9(014) VALUE ZEROS.
+		05 W-RAZAO-SOC			PIC  X(040) VALUE SPACES.
+		05 W-LATITUDE			PIC S9(003)v9(008) VALUW ZEROS.
+		05 W-LONGITUDE			PIC S9(003)v9(008) VALUW ZEROS.
+		05 W-MSG-TELA			PIC  X(060) VALUE SPACES.
+		05 W-OPCAO-TELA			PIC  9(001) VALUE ZEROS.
+	
+*----------------------------------------------------------------*
+ PROCEDURE DIVISION				USING VARIAVEIS-LINKAGE.
 
  00000-PRINCIPAL SECTION.
 
  	PERFORM 10000-INICIA
-    PERFORM 20000-PROCESSA
-    PERFORM 90000-FINALIZA
+
+    PERFORM 20000-PROCESSA		UNTIL W-OPC-CAD-CLI
+								EQUAL 9
+    
+	PERFORM 90000-FINALIZA
  	.
  99999-FIM-PRINCIPAL.            EXIT.
 *----------------------------------------------------------------*
@@ -76,17 +90,15 @@
 
 	OPEN ARQ-CLIENTE
 
-	DISPLAY ERASE
-
-	DISPLAY TELA-CADASTRO
-    
-    ACCEPT TELA-CADASTRO
+	PERFORM 11000-MONTA-TELA
     .
   19999-FIM-INICIA.            EXIT.
 *----------------------------------------------------------------*
 
 *----------------------------------------------------------------*
  11000-MONTA-TELA SECTION.
+
+	DISPLAY ERASE
 
     EVALUATE W-OPCAO-TELA
     WHEN 0
@@ -104,9 +116,11 @@
 	WHEN 4
  		DISPLAY TELA-EXCLUSAO1
 		ACCEPT TELA-EXCLUSAO1
-	WHEN 4
+	WHEN 5
  		DISPLAY TELA-EXCLUSAO2
 		ACCEPT TELA-EXCLUSAO2
+	WHEN OTHER
+		90000-FINALIZA
     END-EVALUATE
     .	
  11999-FIM-MONTA-TELA.            	EXIT.
@@ -123,19 +137,19 @@
 	WHEN 3
 		PERFORM 23000-DELETA-CLIENTE
 	WHEN 4
-		CALL IMPORTACLIENTE
+		PERFORM 24000-IMPORTA-CLIENTE
 	WHEN OTHER
 		MOVE “OPCAO INVALIDA” 		TO W-MSG-TELA
-		PERFORM 11000-MONTA-TELA 
 	END-EVALUATE
-    	.
+
+	PERFORM 11000-MONTA-TELA 
+	.
 29999-FIM-PROCESSA.            		EXIT.
 *----------------------------------------------------------------*
 
 *----------------------------------------------------------------*
  21000-INSERE-CLIENTE 				SECTION.
            
-	DISPLAY 						ERASE
     MOVE SPACES 					TO W-MSG-TELA      
 	MOVE 1							TO W-OPCAO-TELA
 	
@@ -143,9 +157,7 @@
 
 	PERFORM 21100-VERIFICA-CNPJ 
 
-	PERFORM 21200-VERIFICA-LAT-LONG
-
-	PERFORM 21300-BUSCA-COD-CLI
+	PERFORM 21200-VERIFICA-DADOS
 
 	PERFORM 21400-BUSCA-CNPJ-DUPLICADO
 
@@ -158,14 +170,14 @@
  21100-VERIFICA-CNPJ 				SECTION.
            
 	IF W-CNPJ 						NOT NUMERIC
-   		MOVE “CAMPO CNPJ DEVE TER APENAS NUMEROS” TO W-MSG-TELA
+   		MOVE “CAMPO CNPJ NAO EH NUMERICO” TO W-MSG-TELA
 		PERFORM 11000-MONTA-TELA
 	END-IF
 
 	CALL VERIFICA-CNPJ USING W-CNPJ
 
 	IF RETORNO-SUBROTINA <> 0	
-		MOVE MSG-ERRO-SUBROTINA TO W-MSG-TELA
+		MOVE MSG-ERRO-SUBROTINA		TO W-MSG-TELA
 		PERFORM 11000-MONTA-TELA
 	END-IF
 	.
@@ -173,9 +185,15 @@
 *----------------------------------------------------------------*
 
 *----------------------------------------------------------------*
- 21200-VERIFICA-LAT-LONG 			SECTION.
+ 21200-VERIFICA-DADOS 				SECTION.
 
-	IF W-LATITUDE NOT NUMERIC
+ 	IF W-ARQCLI-COD-CLI				NOT NUMERIC
+		MOVE “CAMPO COD DO CLIENTE DEVE SER NUMERICO” 
+									TO W-MSG-TELA
+		PERFORM 11000-MONTA-TELA
+	END-IF
+	
+	IF W-LATITUDE					NOT NUMERIC
 		MOVE “CAMPO LATITUDE DEVE SER NO FORMATO 999,99999999” 
 									TO W-MSG-TELA
 		PERFORM 11000-MONTA-TELA
@@ -187,29 +205,7 @@
 		PERFORM 11000-MONTA-TELA	
 	END-IF
 .
- 21299-FIM-VERIFICA-LAT-LONG.            EXIT.
-*----------------------------------------------------------------*
-
-*----------------------------------------------------------------*
- 21300-BUSCA-COD-CLI SECTION.
-     
-	PERFORM UNTIL W-FS-ENTRADA-CLI 	NOT EQUAL '00'
-			READ ARQ-CLIENTE
-	END-PERFORM
-
-	IF W-FS-ENTRADA-CLI 			EQUAL '35'
-		MOVE 1 						TO W-COD-CLI
-	ELSE
-		IF W-FS-ENTRADA-CLI 		EQUAL '10'
-			COMPUTE W-COD-CLI		= W-ARQCLI-COD-CLI + 1
-		ELSE
-			MOVE "ERRO NA INCLUSAO DO ARQUIVO" 
-									TO W-MSG-TELA
-			PERFORM 11000-MONTA-TELA
-		END-IF
-	END-IF
-	.
- 21399-FIM-BUSCA-COD-CLI.            EXIT.
+ 21299-FIM-VERIFICA-DADOS.            EXIT.
 *----------------------------------------------------------------*
 
 *----------------------------------------------------------------*
@@ -254,7 +250,6 @@
 *----------------------------------------------------------------*
  22000-ATUALIZA-CLIENTE 			SECTION.
            
-	DISPLAY 						ERASE
     MOVE SPACES 					TO W-MSG-TELA 
 	MOVE 2							TO W-OPCAO-TELA     
 	
@@ -278,13 +273,12 @@
 *----------------------------------------------------------------*
  22100-TELA-ATUALIZA2 				SECTION.
 
-	DISPLAY 						ERASE
     MOVE SPACES 					TO W-MSG-TELA      
 	MOVE 3							TO W-OPCAO-TELA     
 	
 	PERFORM 11000-MONTA-TELA
 
-	PERFORM 21200-VERIFICA-LAT-LONG
+	PERFORM 21200-VERIFICA-DADOS
 
 	PERFORM 22110-ATUALIZA-REGISTRO
 	.
@@ -294,6 +288,7 @@
 *----------------------------------------------------------------*
  22110-ATUALIZA-REGISTRO 			SECTION.
 
+	MOVE W-COD-CLI					TO W-ARQCLI-COD-CLI
 	MOVE W-RAZAO-SOC				TO W-ARQCLI-RAZAO
 	MOVE W-LATITUDE					TO W-ARQCLI-LAT
 	MOVE W-LONGITUDE				TO W-ARQCLI-LONG
@@ -317,7 +312,6 @@
 *----------------------------------------------------------------*
  23000-DELETA-CLIENTE 				SECTION.
            
-    DISPLAY 						ERASE
 	MOVE SPACES 					TO W-MSG-TELA      
 	MOVE 4 							TO W-OPCAO-TELA
 	
@@ -341,7 +335,6 @@
 *----------------------------------------------------------------*
  23100-TELA-DELETA2 				SECTION.
 
-	DISPLAY 						ERASE
     MOVE SPACES 					TO W-MSG-TELA      
 	MOVE 5 							TO W-OPCAO-TELA
 
@@ -351,7 +344,6 @@
 	WHEN ‘S’
 		PERFORM 23110-DELETA-REGISTRO 
 	WHEN ‘N’
-		DISPLAY 					ERASE
 		MOVE 0 						TO W-OPCAO-TELA
 		MOVE “EXCLUSAO NAO REALIZADA” TO W-MSG-TELA
 		PERFORM 11000-MONTA-TELA
@@ -379,14 +371,14 @@
 		PERFORM 11000-MONTA-TELA
 	END-IF
 	.
- 23119-FIM-DELETA-REGISTRO.            EXIT.
+ 23119-FIM-DELETA-REGISTRO.		   EXIT.
 *----------------------------------------------------------------*
 
 *----------------------------------------------------------------*
- 90000-FINALIZA SECTION.
+ 90000-FINALIZA						SECTION.
 
 	CLOSE ARQ-CLIENTE
 
 	GO BACK
 	.
- 99999-FIM-FINALIZE. EXIT.
+ 99999-FIM-FINALIZE.				EXIT.

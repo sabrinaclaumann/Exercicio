@@ -15,18 +15,16 @@
     SELECT ARQ-CLIENTE ASSIGN   TO DISK WID-ARQ-CLIENTE
         ORGANIZATION            IS INDEXED
         ACESS MODE              IS SEQUENCIAL
-        RECORD-KEY              IS W-ARQCLI-COD-CLI
-	    ATERNATIVE-KEY 			IS W-ARQCLI-CNPJ
+        RECORD-KEY              IS W-ARQCLI-CNPJ
         LOCK MODE               IS MANUAL
         FILE STATUS             IS W-RESULTADO-ENTRADA-CLI.
 
     SELECT ARQ-VENDEDOR ASSIGN  TO DISK WID-ARQ-VENDEDOR
         ORGANIZATION            IS INDEXED
         ACESS MODE              IS SEQUENCIAL
-        RECORD-KEY              IS W-ARQVEND-COD-VEND
-	    ALTERNATIVE-KEY 		IS W-ARQVEND-CPF
+        RECORD-KEY              IS W-ARQVEND-CPF
         LOCK MODE               IS MANUAL
-        FILE STATUS             IS W-RESULTADO-ENTRADA-CLI.
+        FILE STATUS             IS W-RESULTADO-ENTRADA-VEND.
     
     SELECT ARQ-CLI-VEND ASSIGN  TO DISK WID-ARQ-CLI-VEND
         ORGANIZATION            IS INDEXED
@@ -38,6 +36,7 @@
 *----------------------------------------------------------------*
  DATA                           DIVISION.
 
+*----------------------------------------------------------------*
     FILE                        SECTION.
     
 	COPY ARQ-CLIENTE.
@@ -46,8 +45,14 @@
 
 	COPY ARQ-CLI-VEND.
 
- WORKING-STORAGE SECTION.
 *----------------------------------------------------------------*
+    LINKAGE                     SECTION.
+
+	01 VARIAVEIS-LINKAGE.
+		05 W-MSG-TELA			PIC  X(060).
+
+*----------------------------------------------------------------*
+ WORKING-STORAGE				SECTION.
      
     01 W-RESULTADO-ENTRADA-CLI.
         05 W-FS-ENTRADA-CLI      PIC  X(002).
@@ -60,14 +65,13 @@
 
     01  VARIAVEIS-WORKING.
 		05 W-DISTANCIA			PIC  9(005) VALUE ZEROS.
-		05 W-MSG-TELA			PIC  X(060) VALUE SPACES.
 		05 W-CPF-VEND			PIC  9(011) VALUE ZEROS.
 		05 W-NOME-VEND			PIC  X(040) VALUE SPACES.
 	
 	COPY CALC-DISTANCIA.
 
 *----------------------------------------------------------------*
- PROCEDURE DIVISION				USING W-MSG-TELA.
+ PROCEDURE DIVISION				USING VARIAVEIS-LINKAGE.
 
  00000-PRINCIPAL SECTION.
 
@@ -116,11 +120,11 @@
 		MOVE "ARQUIVO CLIENTE VAZIO" TO W-MSG-TELA
 		PERFORM 90000-FINALIZA 
 	ELSE
-		IF W-FS-ENTRADA-VEND		EQUAL '10'
+		IF W-FS-ENTRADA-CLI		EQUAL '10'
 			MOVE "DISTRIBUICAO REALIZADA COM SUCESSO" TO W-MSG-TELA 
 		ELSE
-	   		IF W-FS-ENTRADA-VEND     NOT EQUAL '00'
-				MOVE "ERRO NA LEITURA DO ARQUIVO DE VENDEDORES" TO W-MSG-TELA
+	   		IF W-FS-ENTRADA-CLI     NOT EQUAL '00'
+				MOVE "ERRO NA LEITURA DO ARQUIVO DE CLIENTES" TO W-MSG-TELA
 				PERFORM 90000-FINALIZA 
 			END-IF
 		END-IF
