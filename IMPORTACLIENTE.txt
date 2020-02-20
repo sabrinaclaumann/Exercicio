@@ -1,7 +1,7 @@
 
 *----------------------------------------------------------------*
  IDENTIFICATION                 DIVISION.
- PROGRAM-ID.                    DISTRIBUICLIENTES.
+ PROGRAM-ID.                    IMPORTACLIENTE.
 *----------------------------------------------------------------*
  ENVIRONMENT                    DIVISION.
  CONFIGURATION                  SECTION.
@@ -12,50 +12,37 @@
  INPUT-OUTPUT                   SECTION.
 
  FILE-CONTROL.
+
+     SELECT ARQ-IMPORT ASSIGN  TO DISK W-ARQUIVO-IMPORT
+        ORGANIZATION            IS INDEXED
+        ACESS MODE              IS SEQUENCIAL
+        RECORD-KEY              IS W-ARQCLIVE-CNPJ
+        LOCK MODE               IS MANUAL
+        FILE STATUS             IS W-RESULTADO-IMPORT-CLI.
+
     SELECT ARQ-CLIENTE ASSIGN   TO DISK WID-ARQ-CLIENTE
         ORGANIZATION            IS INDEXED
         ACESS MODE              IS SEQUENCIAL
-        RECORD-KEY              IS W-ARQCLI-COD-CLI
-	    ATERNATIVE-KEY 			IS W-ARQCLI-CNPJ
+        RECORD-KEY              IS W-ARQCLI-CNPJ
         LOCK MODE               IS MANUAL
-        FILE STATUS             IS W-RESULTADO-ENTRADA-CLI.
-
-    SELECT ARQ-VENDEDOR ASSIGN  TO DISK WID-ARQ-VENDEDOR
-        ORGANIZATION            IS INDEXED
-        ACESS MODE              IS SEQUENCIAL
-        RECORD-KEY              IS W-ARQVEND-COD-VEND
-	    ALTERNATIVE-KEY 		IS W-ARQVEND-CPF
-        LOCK MODE               IS MANUAL
-        FILE STATUS             IS W-RESULTADO-ENTRADA-CLI.
-    
-    SELECT ARQ-CLI-VEND ASSIGN  TO DISK WID-ARQ-CLI-VEND
-        ORGANIZATION            IS INDEXED
-        ACESS MODE              IS SEQUENCIAL
-        RECORD-KEY              IS W-ARQCLIVE-COD-CLI
-        LOCK MODE               IS MANUAL
-        FILE STATUS             IS W-RESULTADO-SAIDA-CLI-VEND.
-    
+        FILE STATUS             IS W-RESULTADO-SAIDA-CLI.
+		    
 *----------------------------------------------------------------*
  DATA                           DIVISION.
 
     FILE                        SECTION.
     
-	COPY ARQ-CLIENTE.
-    
-	COPY ARQ-VENDEDOR.
+	COPY ARQ-IMPORT.
 
-	COPY ARQ-CLI-VEND.
+	COPY ARQ-CLIENTE.
 
  WORKING-STORAGE SECTION.
 *----------------------------------------------------------------*
      
-    01 W-RESULTADO-ENTRADA-CLI.
+    01 W-RESULTADO-IMPORT-CLI.
         05 W-FS-ENTRADA-CLI      PIC  X(002).
     
-    01 W-RESULTADO-ENTRADA-VEND.
-        05 W-FS-ENTRADA-VEND     PIC  X(002).
-    
-    01 W-RESULTADO-SAIDA-CLI-VEND.
+    01 W-RESULTADO-SAIDA-CLI.
         05 W-FS-SAIDA-CLI-VEND   PIC  X(002).
 
     01  VARIAVEIS-WORKING.

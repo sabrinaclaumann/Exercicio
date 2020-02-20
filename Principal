@@ -25,7 +25,10 @@
        00000-PRINCIPAL SECTION.
 
            PERFORM 10000-INICIA
-           PERFORM 20000-PROCESSA
+
+           PERFORM 20000-PROCESSA       UNTIL 
+                W-OPCAO-GERAL           EQUAL 9
+                                    
            PERFORM 90000-FINALIZA
            .
        99999-FIM-PRINCIPAL.             EXIT.
@@ -38,8 +41,8 @@
 
             DISPLAY ERASE
 
-		    PERFORM 11000-MOSTRA-TELA
-           .
+            PERFORM 11000-MOSTRA-TELA
+                .           .
        19999-FIM-INICIA.                EXIT.
       *----------------------------------------------------------------*
      
@@ -56,22 +59,23 @@
       *----------------------------------------------------------------*
        20000-PROCESSA                   SECTION. 
           
-        EVALUATE W-OPCAO-GERAL
+            EVALUATE W-OPCAO-GERAL
             WHEN 1
-	            CALL CADASTRO-CLIENTE
+	            CALL CADASTROCLIENTE    USING W-MSG-TELA
             WHEN 2
-	            CALL CADASTRO-VENDEDOR
+	            CALL CADASTROVENDEDOR   USING W-MSG-TELA
             WHEN 3
-	            CALL RELATORIO-CLIENTE 
+	            CALL RELATORIOCLIENTE   USING W-MSG-TELA
             WHEN 4
-	            CALL RELATORIO-VENDEDOR
-            WHEN 5
-	            CALL DISTRIBUICAO-CLIENTE
+	            CALL RELATORIOVENDEDOR  USING W-MSG-TELA
+            WHEN 5  
+	            CALL DISTRIBUICLIENTE   USING W-MSG-TELA
             WHEN OTHER
 	            MOVE “OPCAO INVALIDA”   TO W-MSG-TELA
-	            PERFORM 11000-MOSTRA-TELA
-        END-EVALUATE        
-        .
+	        END-EVALUATE        
+
+            PERFORM 11000-MOSTRA-TELA
+            .
        29999-FIM-PROCESSA.                 EXIT.
       *----------------------------------------------------------------*
 

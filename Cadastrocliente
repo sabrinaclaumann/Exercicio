@@ -1,7 +1,7 @@
 
 *----------------------------------------------------------------*
  IDENTIFICATION 				DIVISION.
- PROGRAM-ID. 					CADASTROCLINTE.
+ PROGRAM-ID. 					CADASTROCLIENTE.
 *----------------------------------------------------------------*
  ENVIRONMENT 					DIVISION.
  CONFIGURATION 					SECTION.
@@ -59,7 +59,7 @@
     COPY  TELA-EXCLUSAO2.
     
 *----------------------------------------------------------------*
- PROCEDURE DIVISION.
+ PROCEDURE DIVISION				USING W-MSG-TELA.
 
  00000-PRINCIPAL SECTION.
 
@@ -124,7 +124,7 @@
 	WHEN 3
 		PERFORM 23000-DELETA-CLIENTE
 	WHEN 4
-		CALL IMPORTA-CLIENTE
+		CALL IMPORTACLIENTE
 	WHEN OTHER
 		MOVE “OPCAO INVALIDA” 		TO W-MSG-TELA
 		PERFORM 11000-MONTA-TELA 
@@ -388,6 +388,6 @@
 
 	CLOSE ARQ-CLIENTE
 
-	STOP RUN
+	GO BACK
 	.
  99999-FIM-FINALIZE. EXIT.
