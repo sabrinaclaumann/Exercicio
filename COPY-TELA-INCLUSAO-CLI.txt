@@ -2,7 +2,9 @@
 * COPY DA TELA DE INCLUSAO                                       *
 *----------------------------------------------------------------*
 
-01  TELA-INCLUSAO.
+01  TELA-INCLUSAO-CLI.
+    05  LINE  2 COL  2 VALUE "PARA VOLTAR USE DIGITE 9 AQUI: ( )"
+    05  VOLTA LINE  2  COL 33 PIC 9 USING W-CONTR-VOLTA.
     05  LINE  6 COL 10 VALUE "INCLUSAO DE CLIENTES".
     05  LINE  8 COL 10 VALUE "DIGITE OS DADOS DO CLIENTE".
     05  LINE 10 COL 10 VALUE "CNPJ        : _____________".

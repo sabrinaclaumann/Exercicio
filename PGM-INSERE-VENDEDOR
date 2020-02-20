@@ -1,0 +1,212 @@
+
+*----------------------------------------------------------------*
+ IDENTIFICATION 				DIVISION.
+ PROGRAM-ID. 					INSEREVENDEDOR.
+*----------------------------------------------------------------*
+ ENVIRONMENT 					DIVISION.
+ CONFIGURATION 					SECTION.
+*----------------------------------------------------------------*
+ SPECIAL-NAMES.
+ 	DECIMAL-POINT 				IS COMMA.
+
+ INPUT-OUTPUT					SECTION.
+
+ FILE-CONTROL.
+    SELECT ARQ-VENDEDOR ASSIGN TO DISK WID-ARQ-VENDEDOR
+    ORGANIZATION                IS INDEXED
+    ACESS MODE                  IS DYNAMIC
+    RECORD-KEY                  IS W-ARQVEND-CPF
+    LOCK MODE                   IS MANUAL
+    FILE STATUS                 IS W-RESULTADO-VENDEDOR.
+
+*----------------------------------------------------------------*
+ DATA 							DIVISION.
+
+*----------------------------------------------------------------*
+ FILE 							SECTION.
+    
+    COPY ARQ-VENDEDOR.
+
+*----------------------------------------------------------------*
+  LINKAGE						SECTION.
+
+	01 VARIAVEIS-LINKAGE.
+		05 W-MSG-TELA			PIC  X(060).
+
+*----------------------------------------------------------------*
+  SCREEN 						SECTION.
+   
+    COPY TELA-INCLUSAO.
+
+*----------------------------------------------------------------*
+ WORKING-STORAGE 				SECTION.
+
+ 	COPY ROT-VERIF-CPF.
+ 
+    01 W-RESULTADO-VENDEDOR.
+        05 W-FS-VENDEDOR     PIC  X(002).
+
+    01  VARIAVEIS-WORKING.
+		05 W-CONTR-VOLTA		PIC  9(001) VALUE ZEROS.
+		05 W-CONTR-ERRO			PIC  9(001) VALUE ZEROS.
+		05 W-COD-VEND			PIC  9(007) VALUE ZEROS.
+		05 W-CPF				PIC  9(014) VALUE ZEROS.
+		05 W-NOME-VEND			PIC  X(040) VALUE SPACES.
+		05 W-LATITUDE			PIC S9(003)v9(008) VALUW ZEROS.
+		05 W-LONGITUDE			PIC S9(003)v9(008) VALUW ZEROS.
+	
+*----------------------------------------------------------------*
+ PROCEDURE DIVISION				USING VARIAVEIS-LINKAGE.
+
+*----------------------------------------------------------------*
+ 00000-PRINCIPAL SECTION.
+
+ 	PERFORM 10000-INICIA
+	
+	PERFORM 20000-PROCESSA	
+	
+	PERFORM 90000-FINALIZA
+ 	.
+ 99999-FIM-PRINCIPAL.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 10000-INICIA SECTION.
+           
+ 	INITIALIZE VARIAVEIS-WORKING
+
+	OPEN ARQ-VENDEDOR
+
+	DISPLAY ERASE
+	DISPLAY TELA-INCLUSAO-VEND
+    ACCEPT TELA-INCLUSAO-VEND
+    .
+  19999-FIM-INICIA.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 20000-PROCESSA 					SECTION. 
+          
+	PERRFORM  UNTIL	W-CONTR-VOLTA	EQUAL 9 
+		IF W-CONTR-VOLTA			EQUAL ZEROS
+			PERFORM 21000-INSERE-VENDEDOR
+		ELSE
+			MOVE "OPCAO DE VOLTA INVALIDO" TO W-MSG-TELA
+			MOVE ZEROS				TO W-CONTR-VOLTA
+		END-IF
+		DISPLAY ERASE
+		DISPLAY TELA-CADASTRO-VEND
+		ACCEPT TELA-CADASTRO-VEND
+	END-PERFORM
+	.
+29999-FIM-PROCESSA.            		EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 21000-INSERE-VENDEDOR 				SECTION.
+   
+   	PERFORM 21100-VERIFICA-CPF 
+
+	IF W-CONTR-ERRO					EQUAL ZEROS
+		PERFORM 21200-VERIFICA-DADOS
+	END-IF
+	
+	IF W-CONTR-ERRO					EQUAL ZEROS
+		PERFORM 21300-BUSCA-CPF-DUPLICADO
+	END-IF
+
+	IF W-CONTR-ERRO					EQUAL ZEROS
+		PERFORM 21400-GRAVA-REGISTRO         
+	END-IF
+	.
+21999-FIM-INSERE-VENDEDOR.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 21100-VERIFICA-CPF 				SECTION.
+           
+	IF W-CPF 						NOT NUMERIC
+   		MOVE “CAMPO CPF DEVE SER NUMERICO” TO W-MSG-TELA
+		MOVE 1						TO W-CONTR-ERRO
+	ELSE
+		INITIALIZE	W-ROT-VERIF-CPF
+		MOVE W-CPF 					TO W-CPF-CPF
+		CALL VERIFICA-CPF			USING W-ROT-VERIF-CPF
+		IF W-CPF-MSG-ERRO			NOT EQUAL SPACES
+			MOVE MSG-ERRO-SUBROTINA	TO W-MSG-TELA
+			MOVE 1				TO W-CONTR-ERRO
+		END-IF
+	END-IF
+	.
+ 21199-FIM-VERIFICA-CPF.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 21200-VERIFICA-DADOS 				SECTION.
+
+ 	IF W-ARQVEND-COD-VEND				NOT NUMERIC
+		MOVE “CAMPO COD DO CLIENTE DEVE SER NUMERICO” 
+									TO W-MSG-TELA
+		MOVE 1						TO W-CONTR-ERRO
+	END-IF
+	
+	IF W-LATITUDE					NOT NUMERIC
+		MOVE “CAMPO LATITUDE DEVE SER NO FORMATO 999,99999999” 
+									TO W-MSG-TELA
+		MOVE 1						TO W-CONTR-ERRO
+	END-IF
+
+	IF W-LONDITUDE					NOT NUMERIC
+   		MOVE “CAMPO LONGITUDE DEVE SER NO FORMATO 999,99999999” 
+									TO W-MSG-TELA
+		MOVE 1						TO W-CONTR-ERRO
+	END-IF
+.
+ 21299-FIM-VERIFICA-DADOS.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 21300-BUSCA-CPF-DUPLICADO 		SECTION.
+           
+	MOVE W-CPF 					TO W-ARQVEND-CPF     
+	READ ARQ-VENDEDOR
+	
+	IF W-FS-VENDEDOR 		EQUAL '00'
+		MOVE "CPF JA EXISTENTE"	TO W-MSG-TELA
+		MOVE 1					TO W-CONTR-ERRO
+	END-IF
+	.
+21399-FIM-BUSCA-CPF-DUPLICADO.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 21400-GRAVA-REGISTRO 				SECTION.
+           
+	MOVE W-COD-VEND					TO W-ARQVEND-COD-VEND
+	MOVE W-CPF						TO W-ARQVEND-CPF
+	MOVE W-NOME-VEND				TO W-ARQVEND-NOME
+	MOVE W-LATITUDE					TO W-ARQVEND-LAT
+	MOVE W-LONGITUDE				TO W-ARQVEND-LONG
+	
+	WRITE ARQ-VENDEDOR
+
+	IF W-FS-VENDEDOR				EQUAL '00''
+	   MOVE "VENDEDOR INCLUIDO COM SUCESSO"
+	   								TO W-MSG-TELA
+	ELSE
+		STRING "ERRO NA INCLUSAO." W-FS-VENDEDOR	
+									INTO W-MSG-TELA
+		MOVE 1					TO W-CONTR-ERRO
+	END-IF
+	.
+21499-FIM-GRAVA-REGISTRO.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 90000-FINALIZA						SECTION.
+
+	CLOSE ARQ-VENDEDOR
+
+	GO BACK
+	.
+ 99999-FIM-FINALIZE.				EXIT.

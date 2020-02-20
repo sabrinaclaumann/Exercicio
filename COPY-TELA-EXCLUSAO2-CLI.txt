@@ -2,7 +2,7 @@
 * COPY DA SEGUNDA TELA DE EXCLUSAO                               *
 *----------------------------------------------------------------*
 
-01  TELA-EXCLUSAO2.
+01  TELA-EXCLUSAO2-CLI.
         05  LINE  6 COL 10 VALUE "EXCLUSAO DE CLIENTES".
         05  LINE  8 COL 10 VALUE "CONFIRMA A EXCLUSO DO CLIENTE ABAIXO (S/N)? ( )".
         05  OCAOEXC LINE 11 COL 54 PIC X USING W-OPC-EXCLUSAO.  

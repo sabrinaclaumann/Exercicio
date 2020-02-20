@@ -1,0 +1,7 @@
+*----------------------------------------------------------------*
+* COPY DA SUBROTINA QUE VERIFICA SE O CPF EH VALIDO              *
+*----------------------------------------------------------------*
+
+	01  W-ROT-VERIF-CPF.
+		05 W-CPF-CPF			PIC  9(014) VALUE ZEROS.
+		05 W-CPF-MSG-ERRO		PIC  X(060) VALUE SPACES.

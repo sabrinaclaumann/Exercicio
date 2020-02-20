@@ -2,7 +2,7 @@
 * COPY DA SEGUNDA TELA DE ALTERACAO                              *
 *----------------------------------------------------------------*
 
-01  TELA-ALTERACAO2.
+01  TELA-ALTERACAO2-CLI.
     05  LINE  6 COL 10 VALUE "ALTERACAO DE CLIENTES".
     05  LINE  8 COL 10 VALUE "CNPJ        : ".
     05  LINE  8 COL 25 VALUE W-CNPJ.

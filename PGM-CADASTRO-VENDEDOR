@@ -1,0 +1,130 @@
+
+*----------------------------------------------------------------*
+ IDENTIFICATION 				DIVISION.
+ PROGRAM-ID. 					CADASTRO-VENDEDOR.
+*----------------------------------------------------------------*
+ ENVIRONMENT 					DIVISION.
+ CONFIGURATION 					SECTION.
+*----------------------------------------------------------------*
+ SPECIAL-NAMES.
+ 	DECIMAL-POINT 				IS COMMA.
+
+ INPUT-OUTPUT					SECTION.
+
+*----------------------------------------------------------------*
+ DATA 							DIVISION.
+
+*----------------------------------------------------------------*
+  LINKAGE						SECTION.
+
+	01 VARIAVEIS-LINKAGE.
+		05 W-MSG-TELA			PIC  X(060).
+
+*----------------------------------------------------------------*
+  SCREEN 						SECTION.
+   
+   	COPY TELA-CADASTRO.
+
+*----------------------------------------------------------------*
+ WORKING-STORAGE 				SECTION.
+
+ 	COPY ROT-VERIF-ARQ.
+
+	COPY PGM-IMP-VEND
+    
+    01 W-RESULTADO-VENDEDOR.
+        05 W-FS-VENDEDOR     PIC  X(002).
+
+    01  VARIAVEIS-WORKING.
+      	05 W-OPC-CAD-VEND       PIC  9(001) VALUE ZEROS.
+		05 W-COD-VEND			PIC  9(007) VALUE ZEROS.
+		05 W-CPF				PIC  9(014) VALUE ZEROS.
+		05 W-NOME-VEND			PIC  X(040) VALUE SPACES.
+		05 W-LATITUDE			PIC S9(003)v9(008) VALUW ZEROS.
+		05 W-LONGITUDE			PIC S9(003)v9(008) VALUW ZEROS.
+		05 W-MSG-TELA			PIC  X(060) VALUE SPACES.
+		05 W-OPCAO-TELA			PIC  9(001) VALUE ZEROS.
+	
+*----------------------------------------------------------------*
+ PROCEDURE DIVISION				USING VARIAVEIS-LINKAGE.
+
+ 00000-PRINCIPAL SECTION.
+
+ 	PERFORM 10000-INICIA
+
+    PERFORM 20000-PROCESSA		UNTIL W-OPC-CAD-VEND
+								EQUAL 9
+    
+	PERFORM 90000-FINALIZA
+ 	.
+ 99999-FIM-PRINCIPAL.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 10000-INICIA SECTION.
+           
+ 	INITIALIZE VARIAVEIS-WORKING
+
+	DISPLAY ERASE
+	DISPLAY TELA-CADASTRO
+	ACCEPT TELA-CADASTRO
+    .
+  19999-FIM-INICIA.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 20000-PROCESSA 					SECTION. 
+          
+	EVALUATE W-OPC-CAD-VEND
+	WHEN 1
+		CALL INSERE-VENDEDOR USING VARIAVEIS-LINKAG
+	WHEN 2
+		CALL ALTERA-VENDEDOR USING VARIAVEIS-LINKAG
+	WHEN 3
+		CALL EXCLUI-VENDEDOR USING VARIAVEIS-LINKAG
+	WHEN 4
+		PERFORM 21000-IMPORTA-VENDEDOR
+	WHEN OTHER
+		MOVE “OPCAO INVALIDA” 		TO W-MSG-TELA
+	END-EVALUATE
+
+	DISPLAY ERASE
+	DISPLAY TELA-CADASTRO
+	ACCEPT TELA-CADASTRO
+	.
+29999-FIM-PROCESSA.            		EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 21000-IMPORTA-VENDEDOR 				SECTION.
+           
+	IF W-NOME-ARQUIVO			EQUAL SPACES
+		MOVE "ARQUIVO DE IMPORTACAO VAZIO" TO W-MSG-TELA
+	ELSE
+		INITIALIZE				W-ROT-VERIF-ARQ
+		MOVE W-NOME-ARQUIVO		TO W-ARQ-NOME-ARQ
+		CALL VERIFICAARQUIVO    USING W-ROT-VERIF-ARQ
+			IF W-ARQ-MSG-ERRO	EQUAL SPACES
+				INITIALIZE	VAR-PGM-IMP-VEND
+				MOVE W-NOME-ARQUIVO			TO W-IMP-NOME-ARQUIVO 
+				CALL IMPORTA-VENDEDOR		USING VAR-PGM-IMP-VEND
+				IF W-IMP-MSG-TELA			NOT EQUAL SPACES	
+					MOVE W-IMP-MSG-TELA		TO W-MSG-TELA
+				END-IF
+			ELSE
+				MOVE W-ARQ-MSG-ERRO TO W-MSG-TELA
+			END-IF
+		END-IF
+	END-IF
+	.
+ 21999-FIM-IMPORTA-VENDEDOR.            EXIT.
+*----------------------------------------------------------------*
+
+*----------------------------------------------------------------*
+ 90000-FINALIZA						SECTION.
+
+	CLOSE ARQ-VENDEDOR
+
+	GO BACK
+	.
+ 99999-FIM-FINALIZE.				EXIT.

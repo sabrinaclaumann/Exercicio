@@ -2,7 +2,7 @@
 * COPY DA PRIMEIRA TELA DE EXCLUSAO                              *
 *----------------------------------------------------------------*
 
-01  TELA-EXCLUSAO1.
+01  TELA-EXCLUSAO1-CLI.
         05  LINE  6 COL 10 VALUE "EXCLUSAO DE CLIENTES".
         05  LINE  8 COL 10 VALUE "DIGITE O CNPJ DO CLIENTE".
         05  LINE 10 COL 10 VALUE "CNPJ        : _____________".
