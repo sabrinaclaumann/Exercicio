@@ -1,9 +1,9 @@
       *----------------------------------------------------------------*
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. PRINCIPAL.
+       IDENTIFICATION                   DIVISION.
+       PROGRAM-ID.                      PRINCIPAL.
       *----------------------------------------------------------------*
-       ENVIRONMENT DIVISION.
-       CONFIGURATION SECTION.
+       ENVIRONMENT                      DIVISION.
+       CONFIGURATION                    SECTION.
       *----------------------------------------------------------------*
        SPECIAL-NAMES.
            DECIMAL-POINT  IS COMMA.
