@@ -17,19 +17,7 @@
             05  W-MSG-TELA			    PIC X(050) VALUE SPACES.
 
        SCREEN SECTION.
-        01  TELA-PRINC.
-            05  LINE  6 COL 10 VALUE "SISTEMA DE CLIENTES X VENDEDORES".
-            05  LINE  8 COL 10 VALUE "CADASTRO".
-            05  LINE  9 COL 10 VALUE "1 – CADASTRO DE CLIENTE".
-            05  LINE 10 COL 10 VALUE "2 – CADASTRO DE VENDEDOR".
-            05  LINE 12 COL 10 VALUE "RELATORIOS".
-            05  LINE 13 COL 10 VALUE "3 – RELATORIO DE CLIENTE".
-            05  LINE 14 COL 10 VALUE "4 – RELATORIO DE VENDEDOR".
-            05  LINE 16 COL 10 VALUE "EXECUTAR".
-            05  LINE 17 COL 10 VALUE "5 – EXECUTAR DISTRIBUICAO DE CLIENTES".
-            05  LINE 19 COL 10 VALUE "DIGITE A OPCAO DESEJADA: ( )".
-            05  OPCAO LINE  19  COL 36 PIC 9 USING W-OPCAO-GERAL.
-            05  MENSAGEM LINE 21 COL 10 PIC X(050) USING W-MSG-TELA.
+        COPY  TELA-PRINC.
          
       *----------------------------------------------------------------*
        PROCEDURE                        DIVISION.
@@ -40,7 +28,7 @@
            PERFORM 20000-PROCESSA
            PERFORM 90000-FINALIZA
            .
-       99999-FIM-PRINCIPAL.            EXIT.
+       99999-FIM-PRINCIPAL.             EXIT.
       *----------------------------------------------------------------*
      
       *----------------------------------------------------------------*
@@ -65,7 +53,7 @@
        19999-MOSTRA-TELA.                EXIT.
       *----------------------------------------------------------------*
      
-    *----------------------------------------------------------------*
+      *----------------------------------------------------------------*
        20000-PROCESSA                   SECTION. 
           
         EVALUATE W-OPCAO-GERAL
@@ -84,12 +72,12 @@
 	            PERFORM 11000-MOSTRA-TELA
         END-EVALUATE        
         .
-    29999-FIM-PROCESSA.                 EXIT.
-    *----------------------------------------------------------------*
+       29999-FIM-PROCESSA.                 EXIT.
+      *----------------------------------------------------------------*
 
-    *----------------------------------------------------------------*
-    90000-FINALIZA                      SECTION.
+      *----------------------------------------------------------------*
+       90000-FINALIZA                      SECTION.
 
-        STOP RUN
-        .
-    99999-FIM-FINALIZa.                 EXIT.
+            STOP RUN
+            .
+       99999-FIM-FINALIZa.                 EXIT.
