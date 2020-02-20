@@ -1,37 +1,71 @@
 
 *----------------------------------------------------------------*
- IDENTIFICATION 				DIVISION.
- PROGRAM-ID. 					CADASTROCLINTE.
+ IDENTIFICATION                 DIVISION.
+ PROGRAM-ID.                    CADASTRO-CLINTE.
 *----------------------------------------------------------------*
- ENVIRONMENT 					DIVISION.
- CONFIGURATION 					SECTION.
+ ENVIRONMENT                    DIVISION.
+ CONFIGURATION                  SECTION.
 *----------------------------------------------------------------*
  SPECIAL-NAMES.
- 	DECIMAL-POINT 				IS COMMA.
+ 	DECIMAL-POINT               IS COMMA.
 
- INPUT-OUTPUT					SECTION.
+ INPUT-OUTPUT                   SECTION.
 
  FILE-CONTROL.
-    SELECT ARQ-CLIENTE ASSIGN TO DISK WID-ARQ-CLIENTE
-    ORGANIZATION                IS INDEXED
-    ACESS MODE                  IS DYNAMIC
-    RECORD-KEY                  IS W-ARQCLI-COD-CLI
-	AKTERNATIVE-KEY 			IS W-ARQCLI-CNPJ
-    LOCK MODE                   IS MANUAL
-    FILE STATUS                 IS W-RESULTADO-ACESSO.
+    SELECT ARQ-CLIENTE ASSIGN   TO DISK WID-ARQ-CLIENTE
+        ORGANIZATION            IS INDEXED
+        ACESS MODE              IS SEQUENCIAL
+        RECORD-KEY              IS W-ARQ-COD-CLI
+	    ATERNATIVE-KEY 			IS W-ARQ-CNPJ
+        LOCK MODE               IS MANUAL
+        FILE STATUS             IS W-RESULTADO-ACESSO.
 
-*----------------------------------------------------------------*
- DATA 							DIVISION.
-
-    FILE 						SECTION.
-    FD ARQ-CLIENTE.
-    COPY W-ARQ-CLIENTE.
-
- WORKING-STORAGE 				SECTION.
-*----------------------------------------------------------------*
+    SELECT ARQ-VENDEDOR ASSIGN  TO DISK WID-ARQ-CLIENTE
+        ORGANIZATION            IS INDEXED
+        ACESS MODE              IS SEQUENCIAL
+        RECORD-KEY              IS W-ARQ-COD-CLI
+	    ALTERNATIVE-KEY 		IS W-ARQ-CNPJ
+        LOCK MODE               IS MANUAL
+        FILE STATUS             IS W-RESULTADO-ACESSO.
     
-    01 W-RESULTADO-ACESSO.
-        05 W-FILE-STATUS        PIC  X(002).
+    SELECT ARQ-CLI-VEND ASSIGN  TO DISK WID-ARQ-CLIENTE
+        ORGANIZATION            IS INDEXED
+        ACESS MODE              IS SEQUENCIAL
+        RECORD-KEY              IS W-ARQ-COD-CLI
+	    ALTERNATIVE-KEY 		IS W-ARQ-CNPJ
+        LOCK MODE               IS MANUAL
+        FILE STATUS             IS W-RESULTADO-ACESSO.
+    
+
+
+*----------------------------------------------------------------*
+ DATA                           DIVISION.
+
+    FILE                        SECTION.
+    FD ARQ-CLIENTE.
+    01 W-ARQ-CLIENTE.
+        05 W-ARQ-COD-CLI        PIC  9(007).
+        05 W-ARQ-CNPJ           PIC  9(014).
+        05 W-ARQ-RAZAO          PIC  X(040).
+        05 W-ARQ-LAT            PIC S9(003)V9(008).
+        05 W-ARQ-LONG           PIC S9(003)V9(008).
+
+ WORKING-STORAGE SECTION.
+*----------------------------------------------------------------*
+     
+    SCREEN SECTION.
+    01  TELA-FINALIZA.
+         05  MENSAGEM LINE 05 COL 10 PIC X(050) USING W-MSG-TELA.
+
+    01 W-RESULTADO-ENTRADA-CLI.
+        05 W-FS-ENTRADA-CLI      PIC  X(002).
+    
+    01 W-RESULTADO-ENTRADA-VEND.
+        05 W-FS-ENTRADA-VEND     PIC  X(002).
+    
+    01 W-RESULTADO-SAIDA-CLI-VEND.
+        05 W-FS-SAIDA-CLI-VEND   PIC  X(002).
+
 
     01  VARIAVEIS-WORKING.
       	05 W-OPC-CAD-CLI        PIC  9(001) VALUE ZEROS.
@@ -42,55 +76,6 @@
 		05 W-LATITUDE			PIC S9(003)v9(008) VALUW ZEROS.
 		05 W-LONGITUDE			PIC S9(003)v9(008) VALUW ZEROS.
 		05 W-MSG-TELA			PIC  X(060) VALUE SPACES.
-		05 W-OPCAO-TELA			PIC  9(001) VALUE ZEROS.
-	
-	SCREEN 					SECTION.
-   
-   	COPY TELA-CADASTRO.
-
-    COPY TELA-INCLUSAO.
-    
-    01  TELA-ALTERACAO1.
-        05  LINE  6 COL 10 VALUE "ALTERACAO DE CLIENTES".
-        05  LINE  8 COL 10 VALUE "DIGITE O CNPJ DO CLIENTE".
-        05  LINE 10 COL 10 VALUE "CNPJ        : _____________".
-        05  CNPJ LINE 10 COL 25 PIC 9(14) USING W-CNPJ.
-        05  MENSAGEM LINE 15 COL 10 PIC X(050) USING W-MSG-TELA.
-
-     01  TELA-ALTERACAO2.
-        05  LINE  6 COL 10 VALUE "ALTERACAO DE CLIENTES".
-        05  LINE  8 COL 10 VALUE "DIGITE OS DADOS QUE DESEJA ALTERAR".
-        05  LINE 10 COL 10 VALUE "CNPJ        : ".
-        05  CNPJ LINE 10 COL 25 PIC 9(14) USING W-CNPJ.
-        05  LINE 11 COL 10 VALUE "RAZAO SOCIAL:           
-        ________________________________________________________".
-        05  RAZAO LINE 11 COL 25 PIC X(40) USING W-RAZAO-SOC.
-        05  LINE 12 COL 10 VALUE "LATITUDE    : ___,________".
-        05  LATITUDE LINE 12 COL 25 PIC S9(03)V9(08) USING W-LATITUDE.
-        05  LINE 13 COL 10 VALUE "LONGITUDE   : ___,________".
-        05  LONGITUDE LINE 13 COL 25 PIC S9(03)V9(08) USING W-LATITUDE.
-        05  MENSAGEM LINE 15 COL 10 PIC X(050) USING W-MSG-TELA.
-    
-    01  TELA-EXCLUSAO1.
-        05  LINE  6 COL 10 VALUE "EXCLUSAO DE CLIENTES".
-        05  LINE  8 COL 10 VALUE "DIGITE O CNPJ DO CLIENTE".
-        05  LINE 10 COL 10 VALUE "CNPJ        : _____________".
-        05  CNPJ LINE 10 COL 25 PIC 9(14) USING W-CNPJ.
-        05  MENSAGEM LINE 15 COL 10 PIC X(050) USING W-MSG-TELA.
-
-     01  TELA-EXCLUSAO2.
-        05  LINE  6 COL 10 VALUE "EXCLUSAO DE CLIENTES".
-        05  LINE  8 COL 10 VALUE "CONFIRMA A EXCLUSO DO CLIENTE ABAIXO (S/N)? ( )".
-        05  OCAOEXC LINE 11 COL 54 PIC X USING W-OPC-EXCLUSAO.  
-        05  LINE 10 COL 10 VALUE "CNPJ        : ".
-        05  CNPJ LINE 10 COL 25 PIC 9(14) USING W-CNPJ.
-        05  LINE 11 COL 10 VALUE "RAZAO SOCIAL: ".
-        05  RAZAO LINE 11 COL 25 PIC X(40) USING W-RAZAO-SOC.
-        05  LINE 12 COL 10 VALUE "LATITUDE    : ".
-        05  LATITUDE LINE 12 COL 25 PIC S9(03)V9(08) USING W-LATITUDE.
-        05  LINE 13 COL 10 VALUE "LONGITUDE   : ".
-        05  LONGITUDE LINE 13 COL 25 PIC S9(03)V9(08) USING W-LATITUDE.
-        05  MENSAGEM LINE 15 COL 10 PIC X(050) USING W-MSG-TELA.
 		
 *----------------------------------------------------------------*
  PROCEDURE DIVISION.
@@ -236,7 +221,7 @@
 		MOVE 1 						TO W-COD-CLI
 	ELSE
 		IF W-FILE-STATUS 			EQUAL 10
-			COMPUTE W-COD-CLI		= W-ARQCLI-COD-CLI + 1
+			COMPUTE W-COD-CLI		= W-ARQ-COD-CLI + 1
 		ELSE
 			MOVE "ERRO NA INCLUSAO DO ARQUIVO" 
 									TO W-MSG-TELA
@@ -250,7 +235,7 @@
 *----------------------------------------------------------------*
  21400-BUSCA-CNPJ-DUPLICADO 		SECTION.
            
-	MOVE W-CNPJ 					TO W-ARQCLI-CNPJ     
+	MOVE W-CNPJ 					TO W-ARQ-CNPJ     
 	READ ARQ-CLIENTE
 	
 	IF W-FILE-STATUS 				EQUAL '00'
@@ -264,11 +249,11 @@
 *----------------------------------------------------------------*
  21500-GRAVA-REGISTRO 				SECTION.
            
-	MOVE W-COD-CLI					TO W-ARQCLI-COD-CLI
-	MOVE W-CNPJ						TO W-ARQCLI-CNPJ
-	MOVE W-RAZAO-SOC				TO W-ARQCLI-RAZAO
-	MOVE W-LATITUDE					TO W-ARQCLI-LAT
-	MOVE W-LONGITUDE				TO W-ARQCLI-LONG
+	MOVE W-COD-CLI					TO W-ARQ-COD-CLI
+	MOVE W-CNPJ						TO W-ARQ-CNPJ
+	MOVE W-RAZAO=SOC				TO W-ARQ-RAZAO
+	MOVE W-LATITUDE					TO W-ARQ-LAT
+	MOVE W-LONGITUDE				TO W-ARQ-LONG
 	
 	WRITE ARQ-CLIENTE
 
@@ -297,7 +282,7 @@
 
 	PERFORM 21200-VERIFICA-CNPJ
 
-	MOVE W-CNPJ 					TO W-ARQCLI-CNPJ     
+	MOVE W-CNPJ 					TO W-ARQ-CNPJ     
 	READ ARQ-CLIENTE
 	
 	IF W-FILE-STATUS 				EQUAL '00'
@@ -329,9 +314,9 @@
 *----------------------------------------------------------------*
  22110-ATUALIZA-REGISTRO 			SECTION.
 
-	MOVE W-RAZAO-SOC				TO W-ARQCLI-RAZAO
-	MOVE W-LATITUDE					TO W-ARQCLI-LAT
-	MOVE W-LONGITUDE				TO W-ARQCLI-LONG
+	MOVE W-RAZAO-SOC				TO W-ARQ-RAZAO
+	MOVE W-LATITUDE					TO W-ARQ-LAT
+	MOVE W-LONGITUDE				TO W-ARQ-LONG
 	
 	REWRITE ARQ-CLIENTE
 
@@ -360,7 +345,7 @@
 
 	PERFORM 21200-VERIFICA-CNPJ
 
-	MOVE W-CNPJ 					TO W-ARQCLI-CNPJ     
+	MOVE W-CNPJ 					TO W-ARQ-CNPJ     
 	READ ARQ-CLIENTE
 	
 	IF W-FILE-STATUS 				EQUAL '00'

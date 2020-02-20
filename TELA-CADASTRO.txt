@@ -1,0 +1,13 @@
+*----------------------------------------------------------------*
+* COPY DA TELA DE CADASTRO                                       *
+*----------------------------------------------------------------*
+
+01  TELA-CADASTRO.
+        05  LINE  6 COL 10 VALUE "CADASTRO DE CLIENTES".
+        05  LINE  8 COL 10 VALUE "1 - INCLUSAO".
+        05  LINE  9 COL 10 VALUE "2 - ALTERACAO".
+        05  LINE 10 COL 10 VALUE "3 - EXCLUSAO".
+        05  LINE 11 COL 10 VALUE "4 – IMPORTACAO DE ARQUIVO".
+        05  LINE 13 COL 10 VALUE "DIGITE A OPCAO DESEJADA: ( )".
+        05  OPCAO LINE  13  COL 36 PIC 9 USING W-OPC-CAD-CLI.
+        05  MENSAGEM LINE 15 COL 10 PIC X(050) USING W-MSG-TELA.
